@@ -1,5 +1,5 @@
 fastapi==0.95.1
-Jinja2==3.1.2
+jinja2==3.1.2
 uvicorn==0.21.1
 uvloop==0.17.0
-
+python-multipart==0.0.6
