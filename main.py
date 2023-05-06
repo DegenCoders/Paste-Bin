@@ -11,14 +11,29 @@ from cassandra.cluster import Cluster
 import uuid
 import re
 
+from fastapi.middleware.cors import CORSMiddleware
 
+app = FastAPI()
+
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:8000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # MongoDB configuration
 cluster = Cluster()
 session = cluster.connect('my_keyspace')
 rows = session.execute('SELECT * from users;')
 
 # FastAPI configuration
-app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # SECRET_KEY = "secret_key"
@@ -63,10 +78,9 @@ email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 def is_valid_email(email):
     return re.match(email_regex, email) is not None
 
-def user_exists(username, email):
-    usernameQuery = session.execute("SELECT username FROM users WHERE username = '{}' ALLOW FILTERING".format(username))
-    emailQuery = session.execute("SELECT email FROM users WHERE email= '{}' ALLOW FILTERING".format(email))
-    if usernameQuery or emailQuery:
+def user_exists(username):
+    query= session.execute("SELECT username FROM users WHERE username = '{}' ALLOW FILTERING".format(username))
+    if query:
         return True
     else: 
         return False
@@ -94,7 +108,7 @@ async def signup(username: str = Form(...), password: str = Form(...), email: st
 
 @app.post('/signin')
 async def signin(username: str = Form(...), password: str = Form(...)):
-    if not user_exists(username, password):
+    if not user_exists(username):
         return {"Error" : "User does not exist"}
 
     try:
