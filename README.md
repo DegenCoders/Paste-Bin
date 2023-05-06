@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS notes (
     title text,
     content text,
     tags set<text>,
-    folder text,
+    category text,
     created_at timestamp,
     modified_at timestamp
 );
