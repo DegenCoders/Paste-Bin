@@ -28,7 +28,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# MongoDB configuration
+# Cassandra configuration
 cluster = Cluster()
 session = cluster.connect('my_keyspace')
 rows = session.execute('SELECT * from users;')
@@ -36,9 +36,9 @@ rows = session.execute('SELECT * from users;')
 # FastAPI configuration
 templates = Jinja2Templates(directory="templates")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-# SECRET_KEY = "secret_key"
-# ALGORITHM = "HS256"
-# ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SECRET_KEY = "secret_key"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 # Hash password
@@ -49,23 +49,16 @@ def get_password_hash(password):
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-# # Create access token
-# def create_access_token(data: dict, expires_delta: timedelta = None):
-#     to_encode = data.copy()
-#     if expires_delta:
-#         expire = datetime.utcnow() + expires_delta
-#     else:
-#         expire = datetime.utcnow() + timedelta(minutes=15)
-#     to_encode.update({"exp": expire})
-#     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-#     return encoded_jwt
-
-# # Get user by username
-# def get_user(username: str):
-#     user = users_collection.find_one({"username": username})
-#     if user:
-#         return UserInDB(username=user['username'], hashed_password=user['hashed_password'])
-
+# Create access token
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
 # Routes
 @app.get("/", response_class=HTMLResponse)
