@@ -119,6 +119,17 @@ async def signin(username: str = Form(...), password: str = Form(...)):
     return {"Message" : "Sign In Sucessful!"}
 
 
+@app.post("/save")
+async def save(request: Request, value: str= Form(...)):
+    id = uuid.uuid4()
+    query = "INSERT INTO notes(note_id , content , created_at , category , modified_at, tags , title , user_id) VALUES ({}, '{}', toTimestamp(now()), 'luridarcy', toTimestamp(now()), {{'gaming', 'stuff', 'more stuff'}}, 'Title', 550e8400-e29b-41d4-a716-446655440000)".format(id, value)
+    rows = session.execute(query)
+    print(rows.current_rows)
+    return rows.current_rows
+
+
+
+
 
 if __name__ == "__main__":
     import uvicorn
