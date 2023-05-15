@@ -10,11 +10,12 @@ from jwt import PyJWTError
 from cassandra.cluster import Cluster 
 import uuid
 import re
-
+import os
+import dotenv
 from fastapi.middleware.cors import CORSMiddleware
-
+dotenv.load_dotenv()
 app = FastAPI()
-
+PAGE_SIZE=5
 origins = [
     "http://localhost",
     "http://localhost:3000",
@@ -29,7 +30,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 # Cassandra configuration
-cluster = Cluster()
+cluster = Cluster([os.getenv("IP_ADDR")])
 session = cluster.connect('my_keyspace')
 rows = session.execute('SELECT * from users;')
 
@@ -120,14 +121,28 @@ async def signin(username: str = Form(...), password: str = Form(...)):
 
 
 @app.post("/save")
-async def save(request: Request, value: str= Form(...)):
+async def save(request: Request, title: str= Form(...), value: str= Form(...), tags: str= Form(...)):
     id = uuid.uuid4()
-    query = "INSERT INTO notes(note_id , content , created_at , category , modified_at, tags , title , user_id) VALUES ({}, '{}', toTimestamp(now()), 'luridarcy', toTimestamp(now()), {{'gaming', 'stuff', 'more stuff'}}, 'Title', 550e8400-e29b-41d4-a716-446655440000)".format(id, value)
-    rows = session.execute(query)
-    print(rows.current_rows)
+    query = 'SELECT max(indext) FROM notes;'
+    lastindex = session.execute(query).current_rows[0].system_max_indext
+    if lastindex is None:
+        lastindex = 0
+    else:
+        lastindex+=1
+    tags=tags.split()
+    strtags = ", ".join("'{}'".format(tag) for tag in tags)
+    query = "INSERT INTO notes(indext, note_id, content, created_at, category, modified_at, tags, title, user_id) VALUES ({}, {}, '{}', toTimestamp(now()), 'luridarcy', toTimestamp(now()), {{{}}}, '{}', 550e8400-e29b-41d4-a716-446655440000);".format(lastindex, id, value, strtags,title)
+    session.execute(query)
     return rows.current_rows
 
 
+@app.post('/getnotes')
+async def getposts(page: int): 
+    global PAGE_SIZE
+    pagerange=page*PAGE_SIZE
+    query = f"SELECT * FROM notes WHERE user_id = 550e8400-e29b-41d4-a716-446655440000 AND category = 'luridarcy' AND indext >= {pagerange} ORDER BY indext ASC LIMIT {PAGE_SIZE} ALLOW FILTERING;"
+    posts = session.execute(query).current_rows
+    return posts
 
 
 

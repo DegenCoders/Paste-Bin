@@ -6,3 +6,4 @@ python-multipart==0.0.6
 cassandra-driver==3.27.0
 passlib==1.7.4
 pyjwt==2.6.0
+python-dotenv==1.0.0

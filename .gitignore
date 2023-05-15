@@ -5,10 +5,10 @@ __pycache__
 node_modules/
 /.pnp
 .pnp.js
-
+.vscode/
 # testing
 /coverage
-
+.env
 # next.js
 /.next/
 /out/
