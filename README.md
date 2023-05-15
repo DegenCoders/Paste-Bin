@@ -1,6 +1,16 @@
 # Paste-Bin
 
 ## Installation
+For creating a keyspace
+
+<code>
+CREATE KEYSPACE my_keyspace
+  WITH REPLICATION = { 
+   'class' : 'SimpleStrategy', 
+   'replication_factor' : 1 
+  };
+</code>
+
 For creating a user table
 
 <code>
@@ -17,14 +27,16 @@ For creating a notes table
 
 <code>
 CREATE TABLE IF NOT EXISTS notes (
-    note_id uuid PRIMARY KEY,
+    indext int,
+    note_id uuid,
     user_id uuid,
     title text,
     content text,
     tags set<text>,
     category text,
     created_at timestamp,
-    modified_at timestamp
+    modified_at timestamp,
+    PRIMARY KEY((user_id,category),indext, note_id)
 );
 
 </code>
