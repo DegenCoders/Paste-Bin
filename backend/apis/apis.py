@@ -7,6 +7,7 @@ from passlib.context import CryptContext
 import jwt
 from datetime import datetime, timedelta
 import dotenv
+from fastapi.responses import JSONResponse
 
 dotenv.load_dotenv()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -38,8 +39,7 @@ def user_exists(username):
     else: 
         return False
 
-def get_user(username, password):
-    pass
+
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -52,7 +52,7 @@ def connect():
 def signup(username, email, password):
     if not is_valid_email(email):
         return {"Error" : "Enter a valid email"}
-    if user_exists(username, email):
+    if user_exists(username):
         return {"Error" : "User already exists"}
     hashed_password = get_password_hash(password)
     id = uuid.uuid4()
@@ -72,7 +72,12 @@ def signin(username,password):
         hashed_password = row.password
     if not verify_password(password, hashed_password):
         return {"Error" : "Invalid Password"}
-    return {"Message" : "Sign In Sucessful!"}
+    
+    access_token = create_access_token(data={"sub": username}, expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    response = JSONResponse(content={"message" : "Sign in sucessfull!"})
+    response.set_cookie(key="Authorization", value=f"Bearer {access_token}", httponly=True, samesite="None", secure=True)
+
+    return response
 
 def save(title,value,tags):
     id = uuid.uuid4()

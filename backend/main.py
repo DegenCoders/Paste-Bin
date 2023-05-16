@@ -33,7 +33,7 @@ async def index(request: Request):
 
 @app.post("/signup")
 async def signup(username: str = Form(...), password: str = Form(...), email: str = Form(...)):
-    return apis.signup(username,password,email)
+    return apis.signup(username,email, password)
 
 @app.post('/signin')
 async def signin(username: str = Form(...), password: str = Form(...)):

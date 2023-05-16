@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS notes (
     user_id uuid,
     title text,
     content text,
-    tags set<text>,
+    tags set'<text>',
     category text,
     created_at timestamp,
     modified_at timestamp,
