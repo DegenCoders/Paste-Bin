@@ -47,3 +47,7 @@ async def save(title: str= Form(...), value: str= Form(...), tags: str= Form(...
 @app.post('/getnotes')
 async def getposts(page: int): 
     return apis.getposts(page)
+
+@app.get('/deleteToken')
+async def deleteToken():
+    return apis.delete_token()

@@ -100,3 +100,7 @@ def getposts(page):
     posts = session.execute(query).current_rows
     return posts
 
+def delete_token():
+    response = JSONResponse(content={"message": "Token deleted successfully"})
+    response.delete_cookie(key="Authorization")
+    return response
