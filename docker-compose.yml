@@ -1,0 +1,18 @@
+version: '3'
+services:
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra-container
+    ports:
+      - "9042:9042" # Cassandra native transport port
+      - "9160:9160" # Cassandra Thrift port
+      - "7000:7000" # Cassandra inter-node communication port
+      - "7001:7001" # Cassandra SSL inter-node communication port
+    environment:
+      - MAX_HEAP_SIZE=512M # Maximum heap size for Cassandra (adjust as needed)
+      - HEAP_NEWSIZE=100M # Heap size for new generation objects (adjust as needed)
+    volumes:
+      - cassandra-data:/var/lib/cassandra # Cassandra data volume
+
+volumes:
+  cassandra-data:
