@@ -1,6 +1,7 @@
 version: '3'
 services:
   cassandra:
+    hostname: cassandra
     image: cassandra:latest
     container_name: cassandra-container
     ports:
@@ -13,16 +14,8 @@ services:
       - HEAP_NEWSIZE=100M
     volumes:
       - cassandra-data:/var/lib/cassandra
+      - ./scripts:/scripts
     command: ["cassandra", "-f", "-R"]
-
-    # Initialization scripts to create keyspace and tables
-  init-cqlsh:
-    image: cassandra:latest
-    depends_on:
-      - cassandra
-    command: ["cqlsh", "cassandra", "--file", "/scripts/init.cql"]
-    volumes:
-      - ./init.cql:/scripts/init.cql
 
 volumes:
   cassandra-data:
