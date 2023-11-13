@@ -8,6 +8,9 @@ import jwt
 from datetime import datetime, timedelta
 import dotenv
 from fastapi.responses import JSONResponse
+from kafka import KafkaProducer
+
+producer = KafkaProducer(bootstrap_servers=['kafka:9092'])
 
 dotenv.load_dotenv()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -15,6 +18,7 @@ SECRET_KEY = "secret_key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+PAGE_SIZE=5
 
 def get_password_hash(password):
     return pwd_context.hash(password)
@@ -80,6 +84,7 @@ def signin(username,password):
     return response
 
 def save(title,value,tags):
+    producer.send('my-topic', key=b'foo', value=b'bar')
     id = uuid.uuid4()
     query = 'SELECT max(indext) FROM notes;'
     lastindex = session.execute(query).current_rows[0].system_max_indext
@@ -98,6 +103,7 @@ def getposts(page):
     pagerange=page*PAGE_SIZE
     query = f"SELECT * FROM notes WHERE user_id = 550e8400-e29b-41d4-a716-446655440000 AND category = 'luridarcy' AND indext >= {pagerange} ORDER BY indext ASC LIMIT {PAGE_SIZE} ALLOW FILTERING;"
     posts = session.execute(query).current_rows
+    print(posts)
     return posts
 
 def delete_token():
