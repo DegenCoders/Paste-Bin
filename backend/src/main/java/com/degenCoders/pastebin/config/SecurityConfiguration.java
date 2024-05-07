@@ -32,12 +32,14 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((request) ->
-                     request.requestMatchers(HttpMethod.OPTIONS).permitAll()
-                            .requestMatchers("/api/auth/**").permitAll()
-                            .requestMatchers("/api/notes/**").hasAuthority(RoleEntity.USER.name())
-                            .requestMatchers("/api/users/**").hasAuthority(RoleEntity.ADMIN.name())
-                            .anyRequest().authenticated())
+                .authorizeHttpRequests((request) -> request.requestMatchers(HttpMethod.OPTIONS).permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/notes/**").permitAll()
+                        .requestMatchers("/api/notes/create").hasAuthority(RoleEntity.USER.name())
+                        .requestMatchers("/api/notes/update/**").hasAuthority(RoleEntity.USER.name())
+                        .requestMatchers("/api/notes/delete/**").hasAuthority(RoleEntity.USER.name())
+                        .requestMatchers("/api/users/**").hasAuthority(RoleEntity.ADMIN.name())
+                        .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

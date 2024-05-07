@@ -15,20 +15,20 @@ public class NoteEntity {
     private String content;
     private Set<String> tags;
     private String category;
-    private Instant createdAt;
+    private Instant creationDate;
     private Instant modifiedAt;
     
     // Constructors, getters, and setters
     
     public NoteEntity() {}
 
-    public NoteEntity(String userId, String title, String content, Set<String> tags, String category, Instant createdAt, Instant modifiedAt) {
+    public NoteEntity(String userId, String title, String content, Set<String> tags, String category, Instant creationDate, Instant modifiedAt) {
         this.userId = userId;
         this.title = title;
         this.content = content;
         this.tags = tags;
         this.category = category;
-        this.createdAt = createdAt;
+        this.creationDate = creationDate;
         this.modifiedAt = modifiedAt;
     }
 
@@ -82,12 +82,12 @@ public class NoteEntity {
         this.category = category;
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
+    public Instant getcreationDate() {
+        return creationDate;
     }
 
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
+    public void setcreationDate(Instant creationDate) {
+        this.creationDate = creationDate;
     }
 
     public Instant getModifiedAt() {
@@ -107,7 +107,7 @@ public class NoteEntity {
                 ", content='" + content + '\'' +
                 ", tags=" + tags +
                 ", category='" + category + '\'' +
-                ", createdAt=" + createdAt +
+                ", creationDate=" + creationDate +
                 ", modifiedAt=" + modifiedAt +
                 '}';
     }
