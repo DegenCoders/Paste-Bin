@@ -2,36 +2,21 @@ package com.degenCoders.pastebin.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.degenCoders.pastebin.models.UserEntity;
-import com.degenCoders.pastebin.repository.UserRepository;
 
-@Service
-public class UserService {
+public interface UserService {
+    UserDetailsService userDetailsService();
+    
+    List<UserEntity> getAllUsers();
 
-    @Autowired
-    private UserRepository userRepository;
+    UserEntity getUserById(String userId);
 
-    public List<UserEntity> getAllUsers() {
-        return userRepository.findAll();
-    }
+    UserEntity createUser(UserEntity user);
 
-    public UserEntity getUserById(String userId) {
-        return userRepository.findById(userId).orElse(null);
-    }
+    UserEntity updateUser(String userId, UserEntity user);
 
-    public UserEntity createUser(UserEntity user) {
-        return userRepository.save(user);
-    }
+    void deleteUserById(String userId);
 
-    public UserEntity updateUser(String userId, UserEntity user) {
-        user.setUserId(userId);
-        return userRepository.save(user);
-    }
-
-    public void deleteUserById(String userId) {
-        userRepository.deleteById(userId);
-    }
 }

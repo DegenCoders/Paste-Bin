@@ -1,10 +1,13 @@
 package com.degenCoders.pastebin.controller;
-import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import com.degenCoders.pastebin.models.NoteEntity;
 import com.degenCoders.pastebin.service.NoteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/notes")
@@ -13,32 +16,34 @@ public class NoteController {
     @Autowired
     private NoteService noteService;
 
-
     @GetMapping("/")
-    public List<NoteEntity> getAllNotes() {
-        return noteService.getAllNotes();
+    public ResponseEntity<List<NoteEntity>> getAllNotes() {
+        List<NoteEntity> notes = noteService.getAllNotes();
+        return ResponseEntity.ok(notes);
     }
 
     @GetMapping("/{id}")
-    public NoteEntity getNoteById(@PathVariable String id) {
-        return noteService.getNoteById(id);
+    public ResponseEntity<NoteEntity> getNoteById(@PathVariable String id) {
+        NoteEntity note = noteService.getNoteById(id);
+        return ResponseEntity.ok(note);
     }
 
     @PostMapping("/")
-    public NoteEntity postNote(@RequestBody NoteEntity note) {
-        return noteService.createOrUpdateNote(note);
+    public ResponseEntity<NoteEntity> postNote(@RequestBody NoteEntity note) {
+        NoteEntity createdNote = noteService.createOrUpdateNote(note);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdNote);
     }
 
     @PutMapping("/{noteId}")
-    public NoteEntity updateNote(@PathVariable String noteId, @RequestBody NoteEntity note) {
+    public ResponseEntity<NoteEntity> updateNote(@PathVariable String noteId, @RequestBody NoteEntity note) {
         note.setId(noteId);
-        return noteService.createOrUpdateNote(note);
-    }
-    
-    @DeleteMapping("/{id}")
-    public void deleteNoteById(@PathVariable String id) {
-        noteService.deleteNoteById(id);
+        NoteEntity updatedNote = noteService.createOrUpdateNote(note);
+        return ResponseEntity.ok(updatedNote);
     }
 
-    // Other controller methods for CRUD operations
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNoteById(@PathVariable String id) {
+        noteService.deleteNoteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
