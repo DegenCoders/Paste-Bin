@@ -16,7 +16,7 @@ const login = () => {
 
     const [loading, setLoading] = useState(false)
 
-    const onSignup = async () => {
+    const onSignin = async () => {
         try {
             setLoading(true)
             axios.post("http://localhost:8080/api/auth/signin", user).then((response)=>{
@@ -32,7 +32,7 @@ const login = () => {
         }
     }
     useEffect(() => {
-        if (user.email.length > 0 && user.password.length > 0 && user.username.length > 0) {
+        if (user.email.length > 0 && user.password.length > 0) {
             setButtonDisabled(false)
         } else {
             setButtonDisabled(true)
@@ -64,17 +64,12 @@ const login = () => {
         
 
         <button
-            onClick={onSignup}
+            onClick={onSignin}
             className='p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600'
         >
 
-            {buttonDisabled ? "No signup" : "Signup"}
+            {buttonDisabled ? "No signin" : "Signin"}
         </button>
-        <Link
-        href='/'
-        >
-        Login page
-        </Link>
 
     </div>      
   )

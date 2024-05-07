@@ -11,11 +11,18 @@ const Navbar = () => {
                 <h1 className='text-2xl font-bold'>Paste<span className='text-blue-700'>Bin</span></h1>
             </Link>
 
+            
             <div>
+                <Link
+                href='/login'
+                className='px-4 py-3 text-sm rounded-full font-medium text-blue-700 border-blue-700 hover:bg-blue-700 hover:text-white mx-3'>
+                  Login
+                </Link>
+
                 <Link
                 href='/signup'
                 className='px-4 py-3 bg-blue-700 text-white text-sm rounded-full font-medium hover:bg-blue-600  tracking-light'>
-                    Login
+                    Signup
                 </Link>
             </div>
         </nav>

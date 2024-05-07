@@ -85,7 +85,7 @@ const auth = () => {
             {buttonDisabled ? "No signup" : "Signup"}
         </button>
         <Link
-        href='/'
+        href='/login'
         >
         Login page
         </Link>
