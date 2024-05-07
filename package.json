@@ -1,9 +1,0 @@
-{
-  "name": "pastebin",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "dependencies": {
-    "kafkajs": "^2.2.4"
-  }
-}
