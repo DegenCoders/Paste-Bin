@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Prism from 'prismjs';
+import 'prismjs/themes/prism.css';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-python';
-import 'prismjs/themes/prism.css';
 
 const IndexPage = () => {
   const [content, setContent] = useState('');
@@ -44,6 +44,7 @@ const IndexPage = () => {
             value={content}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            spellCheck="false" // Disable spell check
           />
           <div className="mt-4 flex justify-end">
             <button
