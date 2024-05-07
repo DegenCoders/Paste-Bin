@@ -22,8 +22,12 @@ const auth = () => {
     const onSignup = async () => {
         try {
             setLoading(true)
-            const response = await axios("/api/users/signup", user)
-            console.log("Signup sucess", response.data);
+            axios.post("http://localhost:8080/api/auth/signup", user).then((response)=>{
+                console.log("Signup sucess", response.data);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
             router.push('/login')
         } catch (error) {
             console.log("Signup failed")
