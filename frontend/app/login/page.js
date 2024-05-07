@@ -1,11 +1,12 @@
-import React from 'react'
+import Image from "next/image";
+import Navbar from "../components/Navbar";
+import Login from "./Login"
 
-const page = () => {
+export default function Signup() {
   return (
     <div>
-      hi
+        <Navbar />
+        <Login />
     </div>
-  )
+  );
 }
-
-export default page
