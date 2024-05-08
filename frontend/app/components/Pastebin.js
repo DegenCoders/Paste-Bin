@@ -8,17 +8,26 @@ import axios from 'axios';
 
 const IndexPage = () => {
   const [content, setContent] = useState('');
+  const [title, setTitle] = useState('');
+  const [tags, setTags] = useState('');
   const [token, setToken] = useState('');
 
   useEffect(() => {
     Prism.highlightAll();
-    // Fetch JWT token from local storage
     const storedToken = localStorage.getItem('token');
     setToken(storedToken);
   }, []);
 
   const handleInputChange = (event) => {
     setContent(event.target.value);
+  };
+
+  const handleTitleChange = (event) => {
+    setTitle(event.target.value);
+  };
+
+  const handleTagsChange = (event) => {
+    setTags(event.target.value);
   };
 
   const handleKeyDown = (event) => {
@@ -37,21 +46,24 @@ const IndexPage = () => {
     event.preventDefault();
 
     const noteData = {
-      note: content,
+      title: title,
+      content: content,
+      tags: tags.split(',').map(tag => tag.trim()), 
     };
 
     axios.post("http://localhost:8080/api/notes/create", noteData, {
       headers: {
-        Authorization: `Bearer ${token}`, // Include JWT token in the request header
+        Authorization: `Bearer ${token}`, 
       },
     })
       .then((response) => {
         console.log("Note created successfully:", response.data);
-        // Optionally, you can handle the response here
+        setContent('');
+        setTitle('');
+        setTags('');
       })
       .catch((error) => {
         console.error("Error creating note:", error);
-        // Handle errors, display error message to the user, etc.
       });
 
     console.log('Submitted content:', content);
@@ -61,15 +73,29 @@ const IndexPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-full md:w-3/4 lg:w-1/2">
         <form onSubmit={handleSubmit}>
+          <input
+            className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            placeholder="Title"
+            value={title}
+            onChange={handleTitleChange}
+            spellCheck="false" 
+          />
           <textarea
-            className="w-full h-64 p-4 border rounded-md resize-none focus:outline-none focus:ring focus:border-blue-300"
+            className="w-full h-48 p-4 border rounded-md resize-none focus:outline-none focus:ring focus:border-blue-300 mb-4"
             placeholder="Enter your code here..."
             value={content}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            spellCheck="false" // Disable spell check
+            spellCheck="false" 
           />
-          <div className="mt-4 flex justify-end">
+          <input
+            className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            placeholder="Tags (comma-separated)"
+            value={tags}
+            onChange={handleTagsChange}
+            spellCheck="false" 
+          />
+          <div className="flex justify-end">
             <button
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
