@@ -35,7 +35,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        return generateToken(new HashMap<String, String>(), userDetails);
     }
 
     @Override
@@ -46,10 +46,12 @@ public class JwtServiceImpl implements JwtService {
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolvers) {
         final Claims claims = extractAllClaims(token);
+        System.out.println(claims);
         return claimsResolvers.apply(claims);
     }
 
-    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    private String generateToken(Map<String, String> extraClaims, UserDetails userDetails) {
+        System.out.println(userDetails);
         try{
             return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
                     .setIssuedAt(new Date(System.currentTimeMillis()))

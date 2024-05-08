@@ -2,10 +2,22 @@ package com.degenCoders.pastebin.models;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.Set;
 import java.time.Instant;
 
 @Document(collection = "Notes")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class NoteEntity {
     
     @Id
@@ -14,90 +26,9 @@ public class NoteEntity {
     private String title;
     private String content;
     private Set<String> tags;
-    private String category;
     private Instant creationDate;
     private Instant modifiedAt;
     
-    // Constructors, getters, and setters
-    
-    public NoteEntity() {}
-
-    public NoteEntity(String userId, String title, String content, Set<String> tags, String category, Instant creationDate, Instant modifiedAt) {
-        this.userId = userId;
-        this.title = title;
-        this.content = content;
-        this.tags = tags;
-        this.category = category;
-        this.creationDate = creationDate;
-        this.modifiedAt = modifiedAt;
-    }
-
-    // Getters and Setters
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Set<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public Instant getcreationDate() {
-        return creationDate;
-    }
-
-    public void setcreationDate(Instant creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public Instant getModifiedAt() {
-        return modifiedAt;
-    }
-
-    public void setModifiedAt(Instant modifiedAt) {
-        this.modifiedAt = modifiedAt;
-    }
-
     @Override
     public String toString() {
         return "Note{" +
@@ -106,7 +37,6 @@ public class NoteEntity {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", tags=" + tags +
-                ", category='" + category + '\'' +
                 ", creationDate=" + creationDate +
                 ", modifiedAt=" + modifiedAt +
                 '}';

@@ -1,5 +1,9 @@
 package com.degenCoders.pastebin.models;
 
+import java.util.List;
+
 public class DashEntity {
-    private String userId;
+    public List<NoteEntity> notes;
+    public String username;
+    public String email;
 }

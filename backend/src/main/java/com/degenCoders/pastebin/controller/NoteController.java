@@ -30,10 +30,9 @@ public class NoteController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<NoteEntity> postNote(@RequestBody NoteEntity note, @RequestHeader (name="Authorization") String token) {
-        note.setcreationDate(Instant.now());
+    public ResponseEntity<NoteEntity> postNote(@RequestBody NoteEntity note) {
+        note.setCreationDate(Instant.now());
         note.setModifiedAt(Instant.now());
-        System.out.println(token);
         NoteEntity createdNote = noteService.createOrUpdateNote(note);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdNote);
     }
