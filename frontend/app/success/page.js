@@ -1,6 +1,6 @@
 
 import Navbar from "../components/Navbar";
-import SuccessWithNoteId from "./Sucess";
+import SuccessWithNoteId from "./Success";
 
 
 export default function Sucess() {

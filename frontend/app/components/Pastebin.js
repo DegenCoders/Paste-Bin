@@ -5,10 +5,12 @@ import 'prismjs/themes/prism.css';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-python';
 import axios from 'axios';
+import { useRouter } from 'next/navigation'
 
 export const NoteIdContext = createContext();
 
 const Pastebin = ({ children }) => {
+  const router = useRouter()
   const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState('');

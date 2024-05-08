@@ -3,10 +3,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import axios from 'axios';
-import { NoteIdProvider} from '../components/Pastebin'; // Import NoteIdProvider and useNoteId from Pastebin
+import { NoteIdContext } from '../components/Pastebin'; // Import NoteIdProvider and useNoteId from Pastebin
 
 const Success = () => {
-  let { noteId } = useContext(NoteIdProvider) // Get noteId using useNoteId hook
+  let { noteId } = useContext(NoteIdContext) // Get noteId using useNoteId hook
   const [noteData, setNoteData] = useState(null);
   const [language, setLanguage] = useState(null);
 
@@ -50,9 +50,9 @@ const Success = () => {
 
 
 const SuccessWithNoteId = () => (
-  <NoteIdProvider>
+  <NoteIdContext>
     <Success />
-  </NoteIdProvider>
+  </NoteIdContext>
 );
 
 export default SuccessWithNoteId;
