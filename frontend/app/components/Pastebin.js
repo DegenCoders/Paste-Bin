@@ -4,13 +4,18 @@ import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-python';
+import axios from 'axios';
 
 const IndexPage = () => {
   const [content, setContent] = useState('');
+  const [token, setToken] = useState('');
 
   useEffect(() => {
     Prism.highlightAll();
-  }, [content]);
+    // Fetch JWT token from local storage
+    const storedToken = localStorage.getItem('token');
+    setToken(storedToken);
+  }, []);
 
   const handleInputChange = (event) => {
     setContent(event.target.value);
@@ -30,7 +35,25 @@ const IndexPage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Handle submitting content (e.g., send it to a server)
+
+    const noteData = {
+      note: content,
+    };
+
+    axios.post("http://localhost:8080/api/notes/create", noteData, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Include JWT token in the request header
+      },
+    })
+      .then((response) => {
+        console.log("Note created successfully:", response.data);
+        // Optionally, you can handle the response here
+      })
+      .catch((error) => {
+        console.error("Error creating note:", error);
+        // Handle errors, display error message to the user, etc.
+      });
+
     console.log('Submitted content:', content);
   };
 
