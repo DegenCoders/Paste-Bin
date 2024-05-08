@@ -1,5 +1,6 @@
 package com.degenCoders.pastebin.controller;
 
+import com.degenCoders.pastebin.models.DashEntity;
 import com.degenCoders.pastebin.models.UserEntity;
 import com.degenCoders.pastebin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,12 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/dashboard")
+    public ResponseEntity<DashEntity> getDashData() {
+        DashEntity dashboard = new DashEntity();
+        return ResponseEntity.ok(dashboard);
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<UserEntity> getUserById(@PathVariable String userId) {
         UserEntity user = userService.getUserById(userId);
@@ -33,6 +40,13 @@ public class UserController {
         UserEntity createdUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
+
+    // @PostMapping("/notes")
+    // public ResponseEntity<String> createUser(@RequestHeader authHeader) {
+    //     final String authHeader = request.getHeader("Authorization");
+    //     System.out.println(authHeader);
+    //     return ResponseEntity.status(HttpStatus.CREATED).body("testing");
+    // }
 
     @PutMapping("/{userId}")
     public ResponseEntity<UserEntity> updateUser(@PathVariable String userId, @RequestBody UserEntity user) {

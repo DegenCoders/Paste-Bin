@@ -15,6 +15,8 @@ public interface UserService {
 
     UserEntity createUser(UserEntity user);
 
+    // UserEntity getUserNotes();
+
     UserEntity updateUser(String userId, UserEntity user);
 
     void deleteUserById(String userId);

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,10 @@ public class NoteController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<NoteEntity> postNote(@RequestBody NoteEntity note) {
+    public ResponseEntity<NoteEntity> postNote(@RequestBody NoteEntity note, @RequestHeader (name="Authorization") String token) {
+        note.setcreationDate(Instant.now());
+        note.setModifiedAt(Instant.now());
+        System.out.println(token);
         NoteEntity createdNote = noteService.createOrUpdateNote(note);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdNote);
     }
@@ -37,6 +41,7 @@ public class NoteController {
     @PutMapping("/{noteId}")
     public ResponseEntity<NoteEntity> updateNote(@PathVariable String noteId, @RequestBody NoteEntity note) {
         note.setId(noteId);
+        note.setModifiedAt(Instant.now());
         NoteEntity updatedNote = noteService.createOrUpdateNote(note);
         return ResponseEntity.ok(updatedNote);
     }
