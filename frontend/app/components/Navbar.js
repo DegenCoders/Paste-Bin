@@ -7,6 +7,7 @@ const Navbar = () => {
   const isSignedIn = isBrowser ? localStorage.getItem('token') : null;
   const handleSignOut = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('encryptedNoteId');
     window.location.reload();
   };
 

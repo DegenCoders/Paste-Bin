@@ -1,21 +1,27 @@
 "use client";
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import axios from 'axios';
-import { NoteIdContext } from '../components/Pastebin'; // Import NoteIdProvider and useNoteId from Pastebin
+import CryptoJS from 'crypto-js'; // Import CryptoJS
 
 const Success = () => {
-  let { noteId } = useContext(NoteIdContext) // Get noteId using useNoteId hook
+  const [noteId, setNoteId] = useState(null);
   const [noteData, setNoteData] = useState(null);
   const [language, setLanguage] = useState(null);
 
   useEffect(() => {
+    const encryptedNoteId = localStorage.getItem('encryptedNoteId'); 
+    if (encryptedNoteId) {
+      const decryptedNoteId = CryptoJS.AES.decrypt(encryptedNoteId, 'secret').toString(CryptoJS.enc.Utf8); 
+      setNoteId(decryptedNoteId); 
+    }
+
     if (noteId) {
       axios.get(`http://localhost:8080/api/notes/${noteId}`)
         .then(response => {
           setNoteData(response.data);
-          detectLanguage(response.data.content); // Detect language from note content
+          detectLanguage(response.data.content); 
         })
         .catch(error => {
           console.error('Error fetching note data:', error);
@@ -24,7 +30,7 @@ const Success = () => {
   }, [noteId]);
 
   const detectLanguage = (content) => {
-    Prism.highlightAll(); 
+    Prism.highlightAll();
   };
 
   return (
@@ -48,11 +54,4 @@ const Success = () => {
   );
 };
 
-
-const SuccessWithNoteId = () => (
-  <NoteIdContext>
-    <Success />
-  </NoteIdContext>
-);
-
-export default SuccessWithNoteId;
+export default Success;
