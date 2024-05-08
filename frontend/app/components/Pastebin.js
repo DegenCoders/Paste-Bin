@@ -1,16 +1,19 @@
-"use client";
-import React, { useState, useEffect } from 'react';
+"use client"
+import React, { useState, useEffect, createContext } from 'react';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-python';
 import axios from 'axios';
 
-const IndexPage = () => {
+export const NoteIdContext = createContext();
+
+const Pastebin = ({ children }) => {
   const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState('');
   const [token, setToken] = useState('');
+  const [noteId, setNoteId] = useState(null); 
 
   useEffect(() => {
     Prism.highlightAll();
@@ -58,55 +61,58 @@ const IndexPage = () => {
     })
       .then((response) => {
         console.log("Note created successfully:", response.data);
+        setNoteId(response.data.id); // Store note ID in state
         setContent('');
         setTitle('');
         setTags('');
+        router.push('/success');
       })
       .catch((error) => {
         console.error("Error creating note:", error);
       });
-
-    console.log('Submitted content:', content);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full md:w-3/4 lg:w-1/2">
-        <form onSubmit={handleSubmit}>
-          <input
-            className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
-            placeholder="Title"
-            value={title}
-            onChange={handleTitleChange}
-            spellCheck="false" 
-          />
-          <textarea
-            className="w-full h-48 p-4 border rounded-md resize-none focus:outline-none focus:ring focus:border-blue-300 mb-4"
-            placeholder="Enter your code here..."
-            value={content}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            spellCheck="false" 
-          />
-          <input
-            className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
-            placeholder="Tags (comma-separated)"
-            value={tags}
-            onChange={handleTagsChange}
-            spellCheck="false" 
-          />
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
+    <NoteIdContext.Provider value={{ noteId, setNoteId }}> 
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-8 rounded shadow-md w-full md:w-3/4 lg:w-1/2">
+          <form onSubmit={handleSubmit}>
+            <input
+              className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+              placeholder="Title"
+              value={title}
+              onChange={handleTitleChange}
+              spellCheck="false" 
+            />
+            <textarea
+              className="w-full h-48 p-4 border rounded-md resize-none focus:outline-none focus:ring focus:border-blue-300 mb-4"
+              placeholder="Enter your code here..."
+              value={content}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              spellCheck="false" 
+            />
+            <input
+              className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+              placeholder="Tags (comma-separated)"
+              value={tags}
+              onChange={handleTagsChange}
+              spellCheck="false" 
+            />
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+      {children}
+    </NoteIdContext.Provider>
   );
 };
 
-export default IndexPage;
+export default Pastebin;
