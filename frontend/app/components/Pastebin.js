@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect, createContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import 'prismjs/components/prism-javascript';
@@ -15,12 +15,24 @@ const Pastebin = ({ children }) => {
   const [tags, setTags] = useState('');
   const [token, setToken] = useState('');
   const [noteId, setNoteId] = useState(null);
+  const [notes, setNotes] = useState([]);
 
   useEffect(() => {
     Prism.highlightAll();
     const storedToken = localStorage.getItem('token');
     setToken(storedToken);
+    fetchNotes();
   }, []);
+
+  const fetchNotes = () => {
+    axios.get('http://localhost:8080/api/notes/')
+      .then(response => {
+        setNotes(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching notes:', error);
+      });
+  };
 
   const storeEncryptedNoteId = (id) => {
     const encryptedNoteId = CryptoJS.AES.encrypt(id.toString(), 'secret').toString();
@@ -51,15 +63,18 @@ const Pastebin = ({ children }) => {
     }
   };
 
+  const handleNoteClick = (id) => {
+    storeEncryptedNoteId(id);
+    router.push('/success');
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-  
     const noteData = {
       title: title,
       content: content,
-      tags: tags.split(',').map((tag) => tag.trim()),
+      tags: tags.split(',').map(tag => tag.trim()),
     };
-  
     const headers = {}; // Initialize an empty headers object
   
     // Check if the token is present
@@ -67,11 +82,10 @@ const Pastebin = ({ children }) => {
       headers['Authorization'] = `Bearer ${token}`;
     }
   
-    axios
-      .post('http://localhost:8080/api/notes/create', noteData, {
-        headers: headers, // Include headers conditionally
+    axios.post('http://localhost:8080/api/notes/create', noteData, {
+        headers: headers,
       })
-      .then((response) => {
+      .then(response => {
         console.log('Note created successfully:', response.data);
         setNoteId(response.data.id); // Store note ID in state
         setContent('');
@@ -80,24 +94,24 @@ const Pastebin = ({ children }) => {
         storeEncryptedNoteId(response.data.id); // Store encrypted note ID in local storage
         router.push('/success');
       })
-      .catch((error) => {
+      .catch(error => {
         console.error('Error creating note:', error);
       });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full md:w-3/4 lg:w-1/2">
+    <div className="h-screen flex flex-row items-center justify-center bg-gray-100 px-10 py-8">
+      <div className="bg-white p-8 rounded shadow-lg w-full max-w-4xl mb-8">
         <form onSubmit={handleSubmit}>
           <input
-            className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            className="w-full p-3 mb-4 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
             placeholder="Title"
             value={title}
             onChange={handleTitleChange}
             spellCheck="false"
           />
           <textarea
-            className="w-full h-48 p-4 border rounded-md resize-none focus:outline-none focus:ring focus:border-blue-300 mb-4"
+            className="w-full p-4 h-64 border rounded-md resize-none focus:outline-none focus:ring focus:border-blue-300 mb-4"
             placeholder="Enter your code here..."
             value={content}
             onChange={handleInputChange}
@@ -105,7 +119,7 @@ const Pastebin = ({ children }) => {
             spellCheck="false"
           />
           <input
-            className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            className="w-full p-3 mb-4 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
             placeholder="Tags (comma-separated)"
             value={tags}
             onChange={handleTagsChange}
@@ -114,12 +128,27 @@ const Pastebin = ({ children }) => {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+              className="px-6 py-3 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
             >
               Submit
             </button>
           </div>
         </form>
+      </div>
+      <div className="bg-white p-8 rounded overflow-y-scroll scrollbar shadow-lg w-full max-w-xl mx-2 h-2/3">
+        <h2 className="text-lg font-semibold mb-4">Notes:</h2>
+        <div>
+          {notes.map(note => (
+            <div
+              key={note.id}
+              className="cursor-pointer border-b py-2 hover:bg-gray-100"
+              onClick={() => handleNoteClick(note.id)}
+            >
+              <p className="text-blue-500">{note.title}</p>
+              <p className="text-gray-500">{note.content.substring(0, 50)}...</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
