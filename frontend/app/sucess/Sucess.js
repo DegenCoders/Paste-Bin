@@ -1,12 +1,12 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 import axios from 'axios';
-import { NoteIdProvider, useNoteId } from '../components/Pastebin'; // Import NoteIdProvider and useNoteId from Pastebin
+import { NoteIdProvider} from '../components/Pastebin'; // Import NoteIdProvider and useNoteId from Pastebin
 
 const Success = () => {
-  const noteId = useNoteId(); // Get noteId using useNoteId hook
+  let { noteId } = useContext(NoteIdProvider) // Get noteId using useNoteId hook
   const [noteData, setNoteData] = useState(null);
   const [language, setLanguage] = useState(null);
 
@@ -48,7 +48,7 @@ const Success = () => {
   );
 };
 
-// Wrap the Success component with NoteIdProvider
+
 const SuccessWithNoteId = () => (
   <NoteIdProvider>
     <Success />
