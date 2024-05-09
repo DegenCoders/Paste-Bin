@@ -42,7 +42,7 @@ const Success = () => {
             <span className="text-gray-500">{language ? `Language: ${language}` : 'Language: unidentified'}</span>
           </div>
           <pre>
-            <code className={`language-${language}`}>
+            <code className={`language-${language}`} style={{whiteSpace:"pre-line"}}>
               {noteData.content}
             </code>
           </pre>

@@ -1,9 +1,11 @@
 package com.degenCoders.pastebin.service;
 
-import org.springframework.security.core.userdetails.UserDetails;
+import com.degenCoders.pastebin.models.UserEntity;
 
 public interface JwtService {
-    String extractUserName(String token);
-    String generateToken(UserDetails userDetails);
-    boolean isTokenValid(String token, UserDetails userDetails);
+    String extractData(String token);
+    String extractEmail(String token);
+    String extractUserID(String token);
+    String generateToken(UserEntity userDetails);
+    boolean isTokenValid(String token, String name);
 }

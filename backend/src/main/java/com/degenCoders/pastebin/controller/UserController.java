@@ -1,7 +1,10 @@
 package com.degenCoders.pastebin.controller;
 
 import com.degenCoders.pastebin.models.DashEntity;
+import com.degenCoders.pastebin.models.NoteEntity;
 import com.degenCoders.pastebin.models.UserEntity;
+import com.degenCoders.pastebin.service.JwtService;
+import com.degenCoders.pastebin.service.NoteService;
 import com.degenCoders.pastebin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +18,12 @@ import java.util.List;
 public class UserController {
 
     @Autowired
+    private NoteService noteService;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
     private UserService userService;
 
     @GetMapping("/")
@@ -24,8 +33,27 @@ public class UserController {
     }
 
     @GetMapping("/dashboard")
-    public ResponseEntity<DashEntity> getDashData() {
+    public ResponseEntity<DashEntity> getDashData(@RequestHeader("Authorization") String token) {
         DashEntity dashboard = new DashEntity();
+        final String jwt;
+        String username = "";
+        String email = "";
+        if(!token.isEmpty()){
+            jwt = token.substring(7);
+            try{
+                username = jwtService.extractData(jwt);
+                email = jwtService.extractEmail(jwt);
+                System.out.println(email);
+                System.out.println(username);
+            }
+            catch(Error e){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+        }
+        List<NoteEntity> notes = noteService.getUserNotes(username);
+        dashboard.setNotes(notes);
+        dashboard.setUsername(username);
+        dashboard.setEmail(email);
         return ResponseEntity.ok(dashboard);
     }
 
@@ -40,13 +68,6 @@ public class UserController {
         UserEntity createdUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
-
-    // @PostMapping("/notes")
-    // public ResponseEntity<String> createUser(@RequestHeader authHeader) {
-    //     final String authHeader = request.getHeader("Authorization");
-    //     System.out.println(authHeader);
-    //     return ResponseEntity.status(HttpStatus.CREATED).body("testing");
-    // }
 
     @PutMapping("/{userId}")
     public ResponseEntity<UserEntity> updateUser(@PathVariable String userId, @RequestBody UserEntity user) {

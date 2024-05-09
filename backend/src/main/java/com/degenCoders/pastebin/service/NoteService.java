@@ -21,6 +21,10 @@ public class NoteService {
         return noteRepository.findAll();
     }
 
+    public List<NoteEntity> getUserNotes(String userId) {
+        return noteRepository.findByUserId(userId);
+    }
+
     public NoteEntity createOrUpdateNote(NoteEntity note) {
         return noteRepository.save(note);
     }

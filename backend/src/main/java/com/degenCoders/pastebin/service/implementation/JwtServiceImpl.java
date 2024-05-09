@@ -1,5 +1,6 @@
 package com.degenCoders.pastebin.service.implementation;
 
+import com.degenCoders.pastebin.models.UserEntity;
 import com.degenCoders.pastebin.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -15,7 +16,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,31 +29,41 @@ public class JwtServiceImpl implements JwtService {
 
 
     @Override
-    public String extractUserName(String token) {
+    public String extractData(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
     @Override
-    public String generateToken(UserDetails userDetails) {
+    public String extractEmail(String token) {
+        return extractClaim(token, Claims::getAudience);
+    }
+
+    @Override
+    public String extractUserID(String token) {
+        return extractClaim(token, Claims::getIssuer);
+    }
+
+    @Override
+    public String generateToken(UserEntity userDetails) {
         return generateToken(new HashMap<String, String>(), userDetails);
     }
 
     @Override
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String userName = extractUserName(token);
-        return (userName.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    public boolean isTokenValid(String token, String name) {
+        final String userName = extractData(token);
+        return (userName.equals(name)) && !isTokenExpired(token);
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolvers) {
         final Claims claims = extractAllClaims(token);
-        System.out.println(claims);
         return claimsResolvers.apply(claims);
     }
 
-    private String generateToken(Map<String, String> extraClaims, UserDetails userDetails) {
-        System.out.println(userDetails);
+    private String generateToken(Map<String, String> extraClaims, UserEntity userDetails) {
         try{
             return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
+                    .setAudience(userDetails.getEmail())
+                    .setIssuer(userDetails.getUserId())
                     .setIssuedAt(new Date(System.currentTimeMillis()))
                     .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TOKEN))
                     .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
